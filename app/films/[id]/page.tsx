@@ -3,14 +3,16 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
+
+export const runtime = 'nodejs'
+
 export default async function FilmDetailPage({ 
   params 
 }: { 
   params: { id: string } 
 }) {
-  const supabase = createClient()
+  const supabase = await createClient()
   
-  // Fetch movie dari tabel "movies"
   const { data: movie, error } = await supabase
     .from('movies')
     .select('*')
@@ -18,12 +20,12 @@ export default async function FilmDetailPage({
     .single()
   
   if (error || !movie) {
+    console.error('Error fetching movie:', error)
     notFound()
   }
   
   return (
     <main className="min-h-screen bg-background">
-      {/* Back Button */}
       <div className="max-w-7xl mx-auto px-4 py-6">
         <Link 
           href="/films"
@@ -34,10 +36,8 @@ export default async function FilmDetailPage({
         </Link>
       </div>
 
-      {/* Content */}
       <div className="max-w-7xl mx-auto px-4 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Poster */}
           <div className="lg:col-span-1">
             <div className="sticky top-24">
               <img
@@ -48,13 +48,11 @@ export default async function FilmDetailPage({
             </div>
           </div>
           
-          {/* Details */}
           <div className="lg:col-span-2">
             <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
               {movie.title}
             </h1>
             
-            {/* Meta Info */}
             <div className="flex flex-wrap gap-3 mb-8">
               <span className="px-4 py-2 bg-primary text-primary-foreground rounded-full text-sm font-semibold">
                 {movie.type}
@@ -65,12 +63,8 @@ export default async function FilmDetailPage({
               <span className="px-4 py-2 bg-card border border-border rounded-full text-sm">
                 {movie.year}
               </span>
-              <span className="px-4 py-2 bg-accent text-accent-foreground rounded-full text-sm font-semibold">
-                ⭐ 8/10
-              </span>
             </div>
             
-            {/* Description */}
             {movie.description && (
               <div className="mb-8">
                 <h2 className="text-2xl font-bold text-foreground mb-4">Sinopsis</h2>
@@ -80,7 +74,6 @@ export default async function FilmDetailPage({
               </div>
             )}
             
-            {/* Additional Info */}
             <div className="bg-card border border-border rounded-lg p-6">
               <h2 className="text-xl font-bold text-foreground mb-4">Informasi</h2>
               <div className="space-y-3">
